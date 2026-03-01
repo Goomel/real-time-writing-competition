@@ -18,14 +18,32 @@ const io = new Server(httpServer, {
 
 const PORT = 4000;
 
-httpServer.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+const players = {};
 
 io.on('connection', (socket) => {
-  console.log(`Player connected: ${socket.id}`);
+  socket.on('join_game', ({ name }) => {
+    console.log(`Player joining: ${name}`);
+    players[socket.id] = {
+      id: socket.id,
+      name: name || "Anonim",
+      wpm: 0,
+      accuracy: 100,
+      progressText: ""
+    };
+
+    io.emit('game_state', {
+      players: Object.values(players),
+      currentSentence: "Lorem ipsum dolor sit amet."
+    });
+  });
 
   socket.on('disconnect', () => {
-    console.log(`Player disconnected: ${socket.id}`);
+    console.log(`Disconnected: ${socket.id}`);
+    delete players[socket.id];
+    io.emit('game_state', { players: Object.values(players) });
   });
+});
+
+httpServer.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
