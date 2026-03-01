@@ -8,7 +8,7 @@ const JoinGameForm = ({ handleJoin, setName, name }: { handleJoin: (e: React.Syn
           <input 
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="border p-2 rounded w-full mb-4"
+            className="border border-gray-500 p-2 rounded w-full mb-4 text-gray-200"
             placeholder="Type your nickname..."
           />
           <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded w-full">
