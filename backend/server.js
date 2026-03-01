@@ -18,7 +18,48 @@ const io = new Server(httpServer, {
 
 const PORT = 4000;
 
+const roundDuration = 60; // seconds
 const players = {};
+const typingSentences = [
+  "The quick brown fox jumps over the lazy dog.",
+  "I forgot my password again and had to reset it twice.",
+  "Bright stars shimmered across the silent night sky.",
+  "She bought fresh coffee beans from the local market.",
+  "My keyboard makes a strange sound when I type fast.",
+  "A sudden storm interrupted our picnic in the park.",
+  "He solved the puzzle faster than anyone expected.",
+  "The old library smells like dusty books and history.",
+  "Please send me the updated report before noon.",
+  "We watched the sunrise from the top of the hill.",
+  "Her cat always sleeps on the warm laptop.",
+  "They built a small cabin near the quiet lake.",
+  "I need to charge my phone before it dies.",
+  "The colorful balloons floated above the crowd.",
+  "He accidentally spilled water on his notebook.",
+  "Music helps me concentrate while working late.",
+  "The train arrived exactly at seven thirty.",
+  "She practiced typing every day to improve her speed.",
+  "A mysterious message appeared on the screen.",
+  "Winter mornings are cold but beautifully peaceful."
+];
+let currentSentenceIndex = 0;
+let timeLeft = roundDuration;
+
+setInterval(() => {
+  timeLeft--;
+
+  if (timeLeft <= 0) {
+    // Start a new round
+    timeLeft = roundDuration;
+    currentSentenceIndex = currentSentenceIndex + 1;
+  }
+
+  io.emit('game_state', {
+    players: Object.values(players),
+    currentSentence: typingSentences[currentSentenceIndex],
+    timeLeft
+  });
+}, 1000);
 
 io.on('connection', (socket) => {
   socket.on('join_game', ({ name }) => {
@@ -33,7 +74,8 @@ io.on('connection', (socket) => {
 
     io.emit('game_state', {
       players: Object.values(players),
-      currentSentence: "Lorem ipsum dolor sit amet."
+      currentSentence: typingSentences[currentSentenceIndex],
+      timeLeft
     });
   });
 
